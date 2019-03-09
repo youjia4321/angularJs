@@ -1,0 +1,37 @@
+<h1>响应式表单校验</h1>
+<form [formGroup]="formModel" (submit)="onSubmit()">
+    <div>用户名:<input [class.hasError]="formModel.get('username').invalid && formModel.get('username').touched" type="text" formControlName="username"></div>
+    <div>手机号:<input type="text" formControlName="mobile"></div>
+    <div formGroupName="passwordsGroup">
+      <div>密码:<input formControlName="password" type="password"></div>
+      <div>确认密码:<input formControlName="pconfirm" type="password"></div>
+    </div>
+<button type="submit">登录</button>
+
+<div [hidden]="formModel.get('username').valid || formModel.get('username').untouched">
+  <div class="error" [hidden]="!formModel.hasError('required', 'username')"> 
+    <!-- username校验不通过返回是true,所以取反  untouched是判断用户是否在此字段获取过焦点,没有获取就不会显示错误信息,如果获取了改变了焦点但是此字段是无效的就会显示错误信息-->
+    用户名是必填项
+  </div>
+  <div class="error" [hidden]="!formModel.hasError('minlength', 'username')">
+    用户名最小长度是6
+  </div>
+</div>
+<div [hidden]="formModel.get('mobile').valid || formModel.get('mobile').pristine">
+  <!-- pristine是判断此字段是否改变来显示错误信息 -->
+  <div class="error" [hidden]="!formModel.hasError('mobile', 'mobile')">
+      {{ formModel.getError('mobile', 'mobile')?.msg }}
+  </div>
+</div>
+<div class="error" [hidden]="!formModel.get('mobile').pending">
+  <!-- pending 异步校验, 后台延迟了5s时间 -->
+  正在校验手机号合法性
+</div>
+  <div class="error" [hidden]="!formModel.hasError('minlength', ['passwordsGroup', 'password'])">
+      密码最小长度是6
+    </div>
+    <div class="error" [hidden]="!formModel.hasError('equal', 'passwordsGroup')">
+        {{ formModel.getError('equal', 'passwordsGroup')?.msg }}
+      </div>
+</form>
+<!-- <div>{{ formModel.status }}</div> -->
